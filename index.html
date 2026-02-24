@@ -93,6 +93,11 @@
     </div>
 
     <script>
+    
+        // Sound Effects
+        const correctSound = new Audio('https://cdn.pixabay.com'); 
+        const wrongSound = new Audio('https://cdn.pixabay.com');
+
         const SECRET = "1a5h3it2k"; 
 
         // CLUE TIMER: Shows 'a' every 20 seconds for 2 seconds
@@ -123,18 +128,21 @@
             btn.innerText = isPass ? "Hide" : "Show";
         }
 
-        function checkPassword() {
+                function checkPassword() {
             const input = document.getElementById("passInput");
             const shakeTarget = document.getElementById("shake-target");
             const favicon = document.getElementById("favicon");
 
             if (input.value === SECRET) {
+                correctSound.play(); // <--- Play Win Sound
                 favicon.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>";
                 document.getElementById("input-screen").classList.add("hidden");
                 document.getElementById("success-screen").classList.remove("hidden");
             } else {
+                wrongSound.play(); // <--- Play Fail Sound
                 shakeTarget.classList.add("shake-trigger");
                 document.body.classList.add("bg-error");
+                
                 setTimeout(() => {
                     document.getElementById("input-screen").classList.add("hidden");
                     document.getElementById("error-screen").classList.remove("hidden");
@@ -142,6 +150,7 @@
                 }, 600); 
             }
         }
+
 
         function resetPage() {
             const input = document.getElementById("passInput");
