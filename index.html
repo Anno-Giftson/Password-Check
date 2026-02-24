@@ -3,17 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Check</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Secure Access</title>
+    <style>
+        /* BASE STYLES */
+        body, html { 
+            height: 100%; 
+            margin: 0; 
+            font-family: -apple-system, sans-serif; 
+            background: #f6f8fa; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+            transition: background-color 0.4s ease; /* Smooth background fade */
+        }
+
+        #app-container { text-align: center; width: 90%; max-width: 900px; z-index: 10; }
+
+        /* INPUT AREA */
+        .input-group { position: relative; width: 100%; }
+        input { 
+            width: 100%; 
+            padding: 50px; 
+            font-size: 3.5rem; 
+            border: 4px solid #d0d7de; 
+            border-radius: 16px; 
+            box-sizing: border-box; 
+            text-align: center; 
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus { outline: none; border-color: #0969da; box-shadow: 0 0 20px rgba(9, 105, 218, 0.2); }
+
+        /* SHOW/HIDE TOGGLE */
+        .toggle-btn { 
+            position: absolute; right: 25px; top: 50%; transform: translateY(-50%); 
+            cursor: pointer; background: #eee; border: 1px solid #ccc; 
+            padding: 12px 20px; border-radius: 8px; font-weight: bold;
+        }
+
+        /* BUTTONS */
+        .verify-btn { 
+            margin-top: 40px; padding: 25px 80px; font-size: 1.8rem; 
+            background-color: #2da44e; color: white; border: none; 
+            border-radius: 10px; cursor: pointer; transition: transform 0.1s;
+        }
+        .verify-btn:active { transform: scale(0.98); }
+
+        /* ERROR & SUCCESS SCREENS */
+        .hidden { display: none !important; }
+        .big-msg { font-size: 6rem; font-weight: bold; margin-bottom: 20px; }
+        .error-text { color: #cf222e; }
+        .success-text { color: #1a7f37; }
+
+        /* SHAKE ANIMATION */
+        .shake-trigger { animation: shake-kb 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake-kb {
+            10%, 90% { transform: translate3d(-4px, 0, 0); }
+            20%, 80% { transform: translate3d(6px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
+            40%, 60% { transform: translate3d(10px, 0, 0); }
+        }
+
+        /* BACKGROUND FADE STATES */
+        .bg-error { background-color: #ffebe9 !important; } /* Soft red fade */
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Enter Password</h2>
-        <input type="password" id="passwordInput" placeholder="Password">
-        <button onclick="checkPassword()">Submit</button>
-        <p id="feedbackMessage"></p>
+
+    <div id="app-container">
+        <!-- SCREEN 1: INPUT -->
+        <div id="input-screen">
+            <div class="input-group" id="shake-target">
+                <input type="password" id="passInput" placeholder="Password">
+                <button class="toggle-btn" onclick="togglePass()">Show</button>
+            </div>
+            <button class="verify-btn" onclick="checkPassword()">Verify Access</button>
+        </div>
+
+        <!-- SCREEN 2: INCORRECT -->
+        <div id="error-screen" class="hidden">
+            <h1 class="big-msg error-text">❌ WRONG</h1>
+            <p style="font-size: 1.5rem; color: #57606a;">Access Denied</p>
+            <button class="verify-btn" style="background:#57606a" onclick="resetPage()">Try Again</button>
+        </div>
+
+        <!-- SCREEN 3: CORRECT -->
+        <div id="success-screen" class="hidden">
+            <h1 class="big-msg success-text">✅ CORRECT</h1>
+            <p style="font-size: 1.5rem; color: #57606a;">Access Granted</p>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const SECRET = "github123"; // CHANGE YOUR PASSWORD HERE
+
+        function togglePass() {
+            const input = document.getElementById("passInput");
+            const btn = document.querySelector(".toggle-btn");
+            const isPass = input.type === "password";
+            input.type = isPass ? "text" : "password";
+            btn.innerText = isPass ? "Hide" : "Show";
+        }
+
+        function checkPassword() {
+            const input = document.getElementById("passInput");
+            const shakeTarget = document.getElementById("shake-target");
+            const val = input.value;
+
+            if (val === SECRET) {
+                // SUCCESS LOGIC
+                document.getElementById("input-screen").classList.add("hidden");
+                document.getElementById("success-screen").classList.remove("hidden");
+            } else {
+                // FAILURE LOGIC: Shake and Red Fade
+                shakeTarget.classList.add("shake-trigger");
+                document.body.classList.add("bg-error");
+
+                // Wait for animation to finish before switching screens
+                setTimeout(() => {
+                    document.getElementById("input-screen").classList.add("hidden");
+                    document.getElementById("error-screen").classList.remove("hidden");
+                    document.body.classList.remove("bg-error");
+                }, 600); 
+            }
+        }
+
+        function resetPage() {
+            const input = document.getElementById("passInput");
+            const shakeTarget = document.getElementById("shake-target");
+            
+            document.getElementById("error-screen").classList.add("hidden");
+            document.getElementById("input-screen").classList.remove("hidden");
+            
+            input.value = "";
+            shakeTarget.classList.remove("shake-trigger");
+            input.focus();
+        }
+    </script>
 </body>
 </html>
+
