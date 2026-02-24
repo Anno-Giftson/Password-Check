@@ -3,103 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Password Game</title>
+    
+    <!-- EMOJI FAVICON (Locked 🔒) -->
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔒</text></svg>">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔒</text></svg>">
-
-    <title>Secure Access</title>
     <style>
-        /* BASE STYLES */
         body, html { 
-            height: 100%; 
-            margin: 0; 
-            font-family: -apple-system, sans-serif; 
-            background: #f6f8fa; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden;
-            transition: background-color 0.4s ease; /* Smooth background fade */
+            height: 100%; margin: 0; font-family: -apple-system, sans-serif; 
+            background: #f6f8fa; display: flex; align-items: center; 
+            justify-content: center; overflow: hidden; transition: background-color 0.4s ease; 
         }
 
-        #app-container { text-align: center; width: 90%; max-width: 900px; z-index: 10; }
+        #app-container { text-align: center; width: 95%; max-width: 1000px; z-index: 10; }
 
-        /* INPUT AREA */
+        /* GIANT INPUT BOX */
         .input-group { position: relative; width: 100%; }
         input { 
-            width: 100%; 
-            padding: 50px; 
-            font-size: 3.5rem; 
-            border: 4px solid #d0d7de; 
-            border-radius: 16px; 
-            box-sizing: border-box; 
-            text-align: center; 
-            background: white;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 60px; font-size: 4rem; border: 5px solid #d0d7de; 
+            border-radius: 20px; box-sizing: border-box; text-align: center; background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        input:focus { outline: none; border-color: #0969da; box-shadow: 0 0 20px rgba(9, 105, 218, 0.2); }
-
-        /* SHOW/HIDE TOGGLE */
-        .toggle-btn { 
-            position: absolute; right: 25px; top: 50%; transform: translateY(-50%); 
-            cursor: pointer; background: #eee; border: 1px solid #ccc; 
-            padding: 12px 20px; border-radius: 8px; font-weight: bold;
-        }
+        input:focus { outline: none; border-color: #0969da; }
 
         /* BUTTONS */
+        .toggle-btn { 
+            position: absolute; right: 30px; top: 50%; transform: translateY(-50%); 
+            cursor: pointer; background: #eee; border: 1px solid #ccc; 
+            padding: 15px 25px; border-radius: 10px; font-weight: bold; font-size: 1.2rem;
+        }
         .verify-btn { 
-            margin-top: 40px; padding: 25px 80px; font-size: 1.8rem; 
+            margin-top: 50px; padding: 25px 100px; font-size: 2rem; 
             background-color: #2da44e; color: white; border: none; 
-            border-radius: 10px; cursor: pointer; transition: transform 0.1s;
+            border-radius: 12px; cursor: pointer; font-weight: bold;
         }
-        .verify-btn:active { transform: scale(0.98); }
 
-        /* ERROR & SUCCESS SCREENS */
+        /* SCREEN STATES */
         .hidden { display: none !important; }
-        .big-msg { font-size: 6rem; font-weight: bold; margin-bottom: 20px; }
-        .error-text { color: #cf222e; }
-        .success-text { color: #1a7f37; }
-
-        /* SHAKE ANIMATION */
-        .shake-trigger { animation: shake-kb 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        .big-msg { font-size: 7rem; font-weight: bold; margin-bottom: 20px; }
+        .clue-text { font-size: 15rem; font-weight: normal; color: #0969da; }
+        
+        /* ANIMATIONS */
+        .shake-trigger { animation: shake-kb 0.5s both; }
         @keyframes shake-kb {
-            10%, 90% { transform: translate3d(-4px, 0, 0); }
-            20%, 80% { transform: translate3d(6px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
-            40%, 60% { transform: translate3d(10px, 0, 0); }
+            10%, 90% { transform: translate3d(-6px, 0, 0); }
+            30%, 70% { transform: translate3d(-12px, 0, 0); }
+            50% { transform: translate3d(12px, 0, 0); }
         }
 
-        /* BACKGROUND FADE STATES */
-        .bg-error { background-color: #ffebe9 !important; } /* Soft red fade */
+        /* BACKGROUND COLORS */
+        .bg-error { background-color: #ffebe9 !important; }
+        .bg-clue { background-color: #e2eef9 !important; }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        <!-- SCREEN 1: INPUT -->
+        <!-- MAIN INPUT SCREEN -->
         <div id="input-screen">
             <div class="input-group" id="shake-target">
+                
+                <!-- ↓↓↓ HERE IS THE PLACEHOLDER BELOW ↓↓↓ -->
                 <input type="password" id="passInput" placeholder="9 Character Password">
+                
                 <button class="toggle-btn" onclick="togglePass()">Show</button>
             </div>
-            <button class="verify-btn" onclick="checkPassword()">Verify Access</button>
+            <button class="verify-btn" onclick="checkPassword()">Verify</button>
         </div>
 
-        <!-- SCREEN 2: INCORRECT -->
+        <!-- CLUE FLASH SCREEN -->
+        <div id="clue-screen" class="hidden">
+            <h1 class="clue-text">a</h1>
+        </div>
+
+        <!-- WRONG MESSAGE SCREEN -->
         <div id="error-screen" class="hidden">
-            <h1 class="big-msg error-text">❌ WRONG</h1>
-            <p style="font-size: 1.5rem; color: #57606a;">You have not entered the correct password.</p>
+            <h1 class="big-msg" style="color:#cf222e">❌ WRONG</h1>
+            <p style="font-size: 2rem; color: #57606a;">You have not entered the correct password.</p>
             <button class="verify-btn" style="background:#57606a" onclick="resetPage()">Try Again</button>
         </div>
 
-        <!-- SCREEN 3: CORRECT -->
+        <!-- SUCCESS MESSAGE SCREEN -->
         <div id="success-screen" class="hidden">
-            <h1 class="big-msg success-text">✅ CORRECT</h1>
-            <p style="font-size: 1.5rem; color: #57606a;">Congratulations, you have won!<br>You may escape this room now.</p>
+            <h1 class="big-msg" style="color:#1a7f37">✅ CORRECT</h1>
+            <p style="font-size: 2rem; color: #57606a;">
+                Congratulations, you have won this challenge!<br>You may escape this room now.
+            </p>
         </div>
     </div>
 
     <script>
-        const SECRET = "1a5h3it2k"; // CHANGE YOUR PASSWORD HERE
+        const SECRET = "1a5h3it2k"; 
+
+        // CLUE TIMER: Shows 'a' every 10 seconds for 2 seconds
+        setInterval(() => {
+            const inputScreen = document.getElementById("input-screen");
+            const clueScreen = document.getElementById("clue-screen");
+            const isAtInput = !inputScreen.classList.contains("hidden");
+
+            if (isAtInput) {
+                inputScreen.classList.add("hidden");
+                clueScreen.classList.remove("hidden");
+                document.body.classList.add("bg-clue");
+
+                setTimeout(() => {
+                    clueScreen.classList.add("hidden");
+                    document.body.classList.remove("bg-clue");
+                    inputScreen.classList.remove("hidden");
+                    document.getElementById("passInput").focus();
+                }, 2000); 
+            }
+        }, 10000);
 
         function togglePass() {
             const input = document.getElementById("passInput");
@@ -112,18 +126,15 @@
         function checkPassword() {
             const input = document.getElementById("passInput");
             const shakeTarget = document.getElementById("shake-target");
-            const val = input.value;
+            const favicon = document.getElementById("favicon");
 
-            if (val === SECRET) {
-                // SUCCESS LOGIC
+            if (input.value === SECRET) {
+                favicon.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>";
                 document.getElementById("input-screen").classList.add("hidden");
                 document.getElementById("success-screen").classList.remove("hidden");
             } else {
-                // FAILURE LOGIC: Shake and Red Fade
                 shakeTarget.classList.add("shake-trigger");
                 document.body.classList.add("bg-error");
-
-                // Wait for animation to finish before switching screens
                 setTimeout(() => {
                     document.getElementById("input-screen").classList.add("hidden");
                     document.getElementById("error-screen").classList.remove("hidden");
@@ -134,16 +145,12 @@
 
         function resetPage() {
             const input = document.getElementById("passInput");
-            const shakeTarget = document.getElementById("shake-target");
-            
             document.getElementById("error-screen").classList.add("hidden");
             document.getElementById("input-screen").classList.remove("hidden");
-            
             input.value = "";
-            shakeTarget.classList.remove("shake-trigger");
+            document.getElementById("shake-target").classList.remove("shake-trigger");
             input.focus();
         }
     </script>
 </body>
 </html>
-
