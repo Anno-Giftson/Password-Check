@@ -75,12 +75,13 @@
     </div>
 
     <script>
-    // FIXED: Added full working .mp3 links from Pixabay
-    const correctSound = new Audio('https://cdn.pixabay.com'); 
-    const wrongSound = new Audio('https://cdn.pixabay.com');
+    // These names must match your uploaded GitHub files EXACTLY (case-sensitive)
+    const correctSound = new Audio('win.mp3'); 
+    const wrongSound = new Audio('fail.mp3');
 
     const SECRET = "1a5h3it2k"; 
 
+    // CLUE TIMER: Shows 'a' every 20 seconds for 2 seconds
     setInterval(() => {
         const inputScreen = document.getElementById("input-screen");
         const clueScreen = document.getElementById("clue-screen");
@@ -115,7 +116,6 @@
 
         if (input.value === SECRET) {
             correctSound.play(); 
-            // FIXED: Added proper SVG namespace for the open lock
             favicon.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>";
             document.getElementById("input-screen").classList.add("hidden");
             document.getElementById("success-screen").classList.remove("hidden");
@@ -141,6 +141,7 @@
         input.focus();
     }
 </script>
+
 </body>
 </html>
 
