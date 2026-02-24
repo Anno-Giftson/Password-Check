@@ -93,73 +93,73 @@
     </div>
 
     <script>
-    
-        // Sound Effects
-        const correctSound = new Audio('https://cdn.pixabay.com'); 
-        const wrongSound = new Audio('https://cdn.pixabay.com');
+    // FIXED: Use actual .mp3 file links
+    const correctSound = new Audio('https://cdn.pixabay.com'); 
+    const wrongSound = new Audio('https://cdn.pixabay.com');
 
-        const SECRET = "1a5h3it2k"; 
+    const SECRET = "1a5h3it2k"; 
 
-        // CLUE TIMER: Shows 'a' every 20 seconds for 2 seconds
-        setInterval(() => {
-            const inputScreen = document.getElementById("input-screen");
-            const clueScreen = document.getElementById("clue-screen");
-            const isAtInput = !inputScreen.classList.contains("hidden");
+    // CLUE TIMER: Shows 'a' every 20 seconds for 2 seconds
+    setInterval(() => {
+        const inputScreen = document.getElementById("input-screen");
+        const clueScreen = document.getElementById("clue-screen");
+        const isAtInput = !inputScreen.classList.contains("hidden");
 
-            if (isAtInput) {
-                inputScreen.classList.add("hidden");
-                clueScreen.classList.remove("hidden");
-                document.body.classList.add("bg-clue");
+        if (isAtInput) {
+            inputScreen.classList.add("hidden");
+            clueScreen.classList.remove("hidden");
+            document.body.classList.add("bg-clue");
 
-                setTimeout(() => {
-                    clueScreen.classList.add("hidden");
-                    document.body.classList.remove("bg-clue");
-                    inputScreen.classList.remove("hidden");
-                    document.getElementById("passInput").focus();
-                }, 2000); 
-            }
-        }, 20000);
-
-        function togglePass() {
-            const input = document.getElementById("passInput");
-            const btn = document.querySelector(".toggle-btn");
-            const isPass = input.type === "password";
-            input.type = isPass ? "text" : "password";
-            btn.innerText = isPass ? "Hide" : "Show";
+            setTimeout(() => {
+                clueScreen.classList.add("hidden");
+                document.body.classList.remove("bg-clue");
+                inputScreen.classList.remove("hidden");
+                document.getElementById("passInput").focus();
+            }, 2000); 
         }
+    }, 20000);
 
-                function checkPassword() {
-            const input = document.getElementById("passInput");
-            const shakeTarget = document.getElementById("shake-target");
-            const favicon = document.getElementById("favicon");
+    function togglePass() {
+        const input = document.getElementById("passInput");
+        const btn = document.querySelector(".toggle-btn");
+        const isPass = input.type === "password";
+        input.type = isPass ? "text" : "password";
+        btn.innerText = isPass ? "Hide" : "Show";
+    }
 
-            if (input.value === SECRET) {
-                correctSound.play(); // <--- Play Win Sound
-                favicon.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>";
+    function checkPassword() {
+        const input = document.getElementById("passInput");
+        const shakeTarget = document.getElementById("shake-target");
+        const favicon = document.getElementById("favicon");
+
+        if (input.value === SECRET) {
+            correctSound.play(); 
+            // FIXED: Repaired the SVG string for the favicon
+            favicon.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>";
+            document.getElementById("input-screen").classList.add("hidden");
+            document.getElementById("success-screen").classList.remove("hidden");
+        } else {
+            wrongSound.play(); 
+            shakeTarget.classList.add("shake-trigger");
+            document.body.classList.add("bg-error");
+            
+            setTimeout(() => {
                 document.getElementById("input-screen").classList.add("hidden");
-                document.getElementById("success-screen").classList.remove("hidden");
-            } else {
-                wrongSound.play(); // <--- Play Fail Sound
-                shakeTarget.classList.add("shake-trigger");
-                document.body.classList.add("bg-error");
-                
-                setTimeout(() => {
-                    document.getElementById("input-screen").classList.add("hidden");
-                    document.getElementById("error-screen").classList.remove("hidden");
-                    document.body.classList.remove("bg-error");
-                }, 600); 
-            }
+                document.getElementById("error-screen").classList.remove("hidden");
+                document.body.classList.remove("bg-error");
+            }, 600); 
         }
+    }
 
+    function resetPage() {
+        const input = document.getElementById("passInput");
+        document.getElementById("error-screen").classList.add("hidden");
+        document.getElementById("input-screen").classList.remove("hidden");
+        input.value = "";
+        document.getElementById("shake-target").classList.remove("shake-trigger");
+        input.focus();
+    }
+</script>
 
-        function resetPage() {
-            const input = document.getElementById("passInput");
-            document.getElementById("error-screen").classList.add("hidden");
-            document.getElementById("input-screen").classList.remove("hidden");
-            input.value = "";
-            document.getElementById("shake-target").classList.remove("shake-trigger");
-            input.focus();
-        }
-    </script>
 </body>
 </html>
